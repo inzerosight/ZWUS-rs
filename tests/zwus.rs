@@ -36,7 +36,7 @@ fn npm_vectors_decode_to_test123_checkmark() {
     //
     // Keep these as raw strings to preserve invisible chars exactly.
     let npm_base_3 = r#"​᠎᠎​᠎­​᠎‍᠎‍­​​᠎‍​­​​᠎‍‍­​‍​​­​‍​‍­​‍‍᠎­​᠎‍᠎­​​​‍᠎᠎‍‍‍"#;
-    let npm_base_6 = r#""#;
+    let npm_base_6 = r#"­­‍‌­​‎‌⁠‏‏‌⁠‏­‌‏­‏‌‏­­‌‏­⁠‌‎⁠‌‏‏​‏­‎"#;
     let npm_base_8 = r#""#;
 
     let expected = "Test123!✅";
