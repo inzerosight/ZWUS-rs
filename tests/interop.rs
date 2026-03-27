@@ -27,7 +27,7 @@ Repeated: 😀😀😀😀😀\n\
 Single: x\n\
 Zero: 0\n\
 Spaces:   multiple   spaces   here\n\
-Nested ZW: >PASTE_ZW_HERE<";
+Nested ZW: >⁠‏­‌­​‎‌⁠‏‏‌⁠‏­<";
 
 // ── Paste encoded output from npm here ─────────────────────────────
 // In Node:
