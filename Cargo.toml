@@ -1,0 +1,16 @@
+[package]
+name = "zwus"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.70"
+description = "Zero Width Unicode Steganography — hide text in invisible characters."
+license = "WTFPL"
+homepage = "https://zwus.pages.dev"
+repository = "https://github.com/inzerosight/ZWUS-rs"
+readme = "README.md"
+authors = ["planetrenox@pm.me"]
+keywords = ["zero-width", "steganography", "unicode", "encoder", "decoder"]
+categories = ["encoding", "text-processing"]
+include = ["src/**/*", "README.md", "LICENSE"]
+
+[dependencies]
