@@ -1,0 +1,1 @@
+For publishing use env var CARGO_REGISTRY_TOKEN
