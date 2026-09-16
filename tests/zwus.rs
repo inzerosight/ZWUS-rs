@@ -1,6 +1,19 @@
 use zwus::Zwus;
 
 #[test]
+fn default_base_is_6() {
+    let text = "secret 🦀";
+    let numbers = [0, 72, 101];
+    let encoded_text = Zwus::encode_string_with_base(text, 6);
+    let encoded_numbers = Zwus::encode_number_array_with_base(&numbers, 6);
+
+    assert_eq!(Zwus::encode_string(text), encoded_text);
+    assert_eq!(Zwus::decode_to_string(&encoded_text), text);
+    assert_eq!(Zwus::encode_number_array(&numbers), encoded_numbers);
+    assert_eq!(Zwus::decode_to_number_array(&encoded_numbers), numbers);
+}
+
+#[test]
 fn roundtrip_string_base_3_6_8() {
     let text = "secret 🦀 unicode";
     for base in [3u8, 6, 8] {

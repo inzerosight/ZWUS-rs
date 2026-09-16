@@ -1,6 +1,6 @@
 #![doc = include_str!("../README.md")]
 
-pub const DEFAULT_BASE: u8 = 3;
+pub const DEFAULT_BASE: u8 = 6;
 pub const SUPPORTED_BASES: [u8; 3] = [3, 6, 8];
 
 #[derive(Clone, Copy)]
@@ -102,7 +102,7 @@ fn decode_numbers(text: &str, base: u8) -> Vec<u32> {
 pub struct Zwus;
 
 impl Zwus {
-    /// Encode a string using base 3 (default/safest).
+    /// Encode a string using base 6 (default/compact).
     pub fn encode_string(text: &str) -> String {
         Self::encode_string_with_base(text, DEFAULT_BASE)
     }
@@ -112,7 +112,7 @@ impl Zwus {
         encode_numbers(text.chars().map(|c| c as u32), base)
     }
 
-    /// Encode numbers using base 3 (default/safest).
+    /// Encode numbers using base 6 (default/compact).
     pub fn encode_number_array(numbers: &[u32]) -> String {
         Self::encode_number_array_with_base(numbers, DEFAULT_BASE)
     }
@@ -122,7 +122,7 @@ impl Zwus {
         encode_numbers(numbers.iter().copied(), base)
     }
 
-    /// Decode to string using base 3 (default/safest).
+    /// Decode to string using base 6 (default/compact).
     /// Non-ZWUS chars are ignored automatically.
     pub fn decode_to_string(text: &str) -> String {
         Self::decode_to_string_with_base(text, DEFAULT_BASE)
@@ -137,7 +137,7 @@ impl Zwus {
             .collect()
     }
 
-    /// Decode to numbers using base 3 (default/safest).
+    /// Decode to numbers using base 6 (default/compact).
     /// Non-ZWUS chars are ignored automatically.
     pub fn decode_to_number_array(text: &str) -> Vec<u32> {
         Self::decode_to_number_array_with_base(text, DEFAULT_BASE)

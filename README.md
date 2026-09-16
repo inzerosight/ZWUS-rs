@@ -4,7 +4,7 @@ Zero Width Unicode Steganography — hide text inside invisible characters.
 
 ```toml
 [dependencies]
-zwus = "0.1"
+zwus = "0.2"
 ```
 
 ## Usage
@@ -28,14 +28,19 @@ assert_eq!(decoded, vec![72, 101, 108]);
 Higher base = shorter output, but more likely visible in some renderers.
 
 ```rust
-Zwus::encode_string_with_base("hi", 3); // default, safest
-Zwus::encode_string_with_base("hi", 6); // compact
+use zwus::Zwus;
+
+Zwus::encode_string_with_base("hi", 3); // safest
+Zwus::encode_string_with_base("hi", 6); // default, compact
 Zwus::encode_string_with_base("hi", 8); // most compact
 ```
 
 Decode must match the encode base:
 
 ```rust
+use zwus::Zwus;
+
+let encoded = Zwus::encode_string_with_base("hi", 6);
 Zwus::decode_to_string_with_base(&encoded, 6);
 ```
 
@@ -44,6 +49,8 @@ Zwus::decode_to_string_with_base(&encoded, 6);
 Non-ZWUS characters are automatically ignored during decoding, so hidden payloads survive being mixed into normal text.
 
 ```rust
+use zwus::Zwus;
+
 let hidden = Zwus::encode_string("secret");
 let carrier = format!("nothing to see here{hidden}, move along");
 let extracted = Zwus::decode_to_string(&carrier);
@@ -55,6 +62,8 @@ assert_eq!(extracted, "secret");
 Handles emoji and all of Unicode — anything `char` can represent.
 
 ```rust
+use zwus::Zwus;
+
 let encoded = Zwus::encode_string("hello 🦀🔥");
 let decoded = Zwus::decode_to_string(&encoded);
 assert_eq!(decoded, "hello 🦀🔥");
