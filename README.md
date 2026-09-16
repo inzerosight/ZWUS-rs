@@ -4,7 +4,7 @@ Zero Width Unicode Steganography — hide text inside invisible characters.
 
 ```toml
 [dependencies]
-zwus = "0.2"
+zwus = "0.3"
 ```
 
 ## Usage
@@ -25,14 +25,14 @@ assert_eq!(decoded, vec![72, 101, 108]);
 
 ### Base
 
-Higher base = shorter output, but more likely visible in some renderers.
+Base 7 ranks printable ASCII so common English characters use one or two digits. Base 6 keeps Unicode code points as numbers. Some platforms strip particular zero-width characters.
 
 ```rust
 use zwus::Zwus;
 
 Zwus::encode_string_with_base("hi", 3); // safest
-Zwus::encode_string_with_base("hi", 6); // default, compact
-Zwus::encode_string_with_base("hi", 8); // most compact
+Zwus::encode_string_with_base("hi", 6); // code point encoding
+Zwus::encode_string_with_base("hi", 7); // default, compact for ordinary English text
 ```
 
 Decode must match the encode base:
@@ -43,6 +43,8 @@ use zwus::Zwus;
 let encoded = Zwus::encode_string_with_base("hi", 6);
 Zwus::decode_to_string_with_base(&encoded, 6);
 ```
+
+Number arrays use ordinary base digits in every standard. Base 7's frequency ranking applies only to strings. Decoding ignores visible text mixed into a payload.
 
 ### Embedded in visible text
 

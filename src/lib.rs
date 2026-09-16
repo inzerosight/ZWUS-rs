@@ -1,7 +1,7 @@
 #![doc = include_str!("../README.md")]
 
-pub const DEFAULT_BASE: u8 = 6;
-pub const SUPPORTED_BASES: [u8; 3] = [3, 6, 8];
+pub const DEFAULT_BASE: u8 = 7;
+pub const SUPPORTED_BASES: [u8; 3] = [3, 6, 7];
 
 #[derive(Clone, Copy)]
 struct Alphabet {
@@ -21,11 +21,10 @@ const BASE_6: Alphabet = Alphabet {
     ],
 };
 
-const BASE_8: Alphabet = Alphabet {
+const BASE_7: Alphabet = Alphabet {
     unifier: '\u{200C}',
     digits: &[
-        '\u{200D}', '\u{200F}', '\u{00AD}', '\u{2060}', '\u{200B}', '\u{200E}', '\u{180E}',
-        '\u{FEFF}',
+        '\u{200D}', '\u{200F}', '\u{00AD}', '\u{2060}', '\u{200B}', '\u{200E}', '\u{FEFF}',
     ],
 };
 
@@ -34,8 +33,8 @@ fn alphabet(base: u8) -> Alphabet {
     match base {
         3 => BASE_3,
         6 => BASE_6,
-        8 => BASE_8,
-        _ => panic!("Unsupported base {base}. Use 3, 6, or 8."),
+        7 => BASE_7,
+        _ => panic!("Unsupported base {base}. Use 3, 6, or 7."),
     }
 }
 
@@ -98,52 +97,99 @@ fn decode_numbers(text: &str, base: u8) -> Vec<u32> {
         .collect()
 }
 
+const PRIORITY: &str = "te aoinshrdlucmfwypvbgkjqxz.,!?'-:;()0123456789ETAOINSHRDLUCMFWYPVBGKJQXZ";
+
+fn ascii_order() -> Vec<char> {
+    let mut order = Vec::new();
+    for c in PRIORITY
+        .chars()
+        .chain((32..=126).filter_map(char::from_u32))
+    {
+        if !order.contains(&c) {
+            order.push(c);
+        }
+    }
+    order
+}
+
+fn rank_of(c: char, order: &[char]) -> u32 {
+    order
+        .iter()
+        .position(|&x| x == c)
+        .map(|i| i as u32)
+        .unwrap_or_else(|| {
+            if (c as u32) < 32 {
+                c as u32 + 95
+            } else {
+                c as u32
+            }
+        })
+}
+
+fn point_of(rank: u32, order: &[char]) -> Option<char> {
+    if rank < 95 {
+        order.get(rank as usize).copied()
+    } else {
+        char::from_u32(if rank < 127 { rank - 95 } else { rank })
+    }
+}
+
 /// Zero Width Unicode Standard (ZWUS)
 pub struct Zwus;
 
 impl Zwus {
-    /// Encode a string using base 6 (default/compact).
+    /// Encode a string using base 7 (default/compact).
     pub fn encode_string(text: &str) -> String {
         Self::encode_string_with_base(text, DEFAULT_BASE)
     }
 
-    /// Encode a string using base 3, 6, or 8.
+    /// Encode a string using base 3, 6, or 7.
     pub fn encode_string_with_base(text: &str, base: u8) -> String {
-        encode_numbers(text.chars().map(|c| c as u32), base)
+        if base == 7 {
+            let order = ascii_order();
+            encode_numbers(text.chars().map(|c| rank_of(c, &order)), base)
+        } else {
+            encode_numbers(text.chars().map(|c| c as u32), base)
+        }
     }
 
-    /// Encode numbers using base 6 (default/compact).
+    /// Encode numbers using base 7 (default/compact).
     pub fn encode_number_array(numbers: &[u32]) -> String {
         Self::encode_number_array_with_base(numbers, DEFAULT_BASE)
     }
 
-    /// Encode numbers using base 3, 6, or 8.
+    /// Encode numbers using base 3, 6, or 7.
     pub fn encode_number_array_with_base(numbers: &[u32], base: u8) -> String {
         encode_numbers(numbers.iter().copied(), base)
     }
 
-    /// Decode to string using base 6 (default/compact).
+    /// Decode to string using base 7 (default/compact).
     /// Non-ZWUS chars are ignored automatically.
     pub fn decode_to_string(text: &str) -> String {
         Self::decode_to_string_with_base(text, DEFAULT_BASE)
     }
 
-    /// Decode to string using base 3, 6, or 8.
+    /// Decode to string using base 3, 6, or 7.
     /// Non-ZWUS chars are ignored automatically.
     pub fn decode_to_string_with_base(text: &str, base: u8) -> String {
+        let order = (base == 7).then(ascii_order);
         decode_numbers(text, base)
             .into_iter()
-            .filter_map(char::from_u32)
+            .filter_map(|n| {
+                order
+                    .as_ref()
+                    .map_or_else(|| char::from_u32(n), |o| point_of(n, o))
+            })
             .collect()
     }
 
-    /// Decode to numbers using base 6 (default/compact).
+    /// Decode to numbers using base 7 (default/compact).
     /// Non-ZWUS chars are ignored automatically.
     pub fn decode_to_number_array(text: &str) -> Vec<u32> {
         Self::decode_to_number_array_with_base(text, DEFAULT_BASE)
     }
 
-    /// Decode to numbers using base 3, 6, or 8.
+    /// Decode to numbers using base 3, 6, or 7.
     /// Non-ZWUS chars are ignored automatically.
     pub fn decode_to_number_array_with_base(text: &str, base: u8) -> Vec<u32> {
         decode_numbers(text, base)
